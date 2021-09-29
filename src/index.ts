@@ -122,3 +122,23 @@ export const getMonthArray: TypeMakeMonth = (year, month, day, lang) => {
     days,
   };
 };
+
+export const printDDMMYYYY = (date: Date) => {
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  let ddmmyyyy = '';
+
+  if (day < 10) {
+    ddmmyyyy += `0${day}.`;
+  } else {
+    ddmmyyyy += `${day}.`;
+  }
+  if (month < 10) {
+    ddmmyyyy += `0${month}.`;
+  } else {
+    ddmmyyyy += `${month}.`;
+  }
+  ddmmyyyy += `${year}`;
+  return ddmmyyyy;
+};
