@@ -1,0 +1,10 @@
+{
+  "name": "@janossik/date",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Marcin Czaniecki",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^4.4.3"
+  }
+}
