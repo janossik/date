@@ -1,34 +1,7 @@
-export const monthPL = [
-  'styczeń',
-  'luty',
-  'marzec',
-  'kwiecień',
-  'maj',
-  'czerwiec',
-  'lipiec',
-  'sierpień',
-  'wrzesień',
-  'październik',
-  'listopad',
-  'grudzień',
-];
+import { TypeGetName, TypeMakeMonth, TypeLang } from './types/type';
+import { shortDayLang, dayLang, monthLang, shortMonthLang } from './utils/lang';
 
-export const monthDE = [
-  'januar',
-  'februar',
-  'märz',
-  'april',
-  'kann',
-  'juni',
-  'juli',
-  'august',
-  'september',
-  'oktober',
-  'november',
-  'dezember',
-];
-
-export const createId = () => Math.round(Math.random() * Math.pow(10, 12)).toString(16);
+const createId = () => Math.round(Math.random() * Math.pow(10, 12)).toString(16);
 
 export const getDay = (date: Date) => {
   let day = date.getDay();
@@ -38,75 +11,53 @@ export const getDay = (date: Date) => {
   return day - 1;
 };
 
-export const numberMonthToNameMonth = (month: number, lang?: string[]) => {
-  let name = '';
-  switch (month) {
-    case 0:
-      name = lang ? lang[0] : 'january';
-      break;
-    case 1:
-      name = lang ? lang[1] : 'february';
-      break;
-    case 2:
-      name = lang ? lang[2] : 'march';
-      break;
-    case 3:
-      name = lang ? lang[3] : 'april';
-      break;
-    case 4:
-      name = lang ? lang[4] : 'may';
-      break;
-    case 5:
-      name = lang ? lang[5] : 'june';
-      break;
-    case 6:
-      name = lang ? lang[6] : 'july';
-      break;
-    case 7:
-      name = lang ? lang[7] : 'august';
-      break;
-    case 8:
-      name = lang ? lang[8] : 'september';
-      break;
-    case 9:
-      name = lang ? lang[9] : 'october';
-      break;
-    case 10:
-      name = lang ? lang[10] : 'november';
-      break;
-    case 11:
-      name = lang ? lang[11] : 'december';
-      break;
-    default:
-      throw Error('You must enter a number from 0 to 11');
+export const getNameMonth: TypeGetName = (index, lang = 'en') => {
+  if (index > 11 || index < 0) {
+    throw Error('You must give index between 0-11');
   }
-  return name;
+  return monthLang[lang][index];
 };
 
-type TypeMakeMonth = (
-  year?: number,
-  month?: number,
-  day?: number,
-  lang?: string[],
-) => {
-  name: string;
-  days: { id: string; day: number; visible: boolean }[];
+export const getNameShortMonth: TypeGetName = (index, lang = 'en') => {
+  if (index > 11 || index < 0) {
+    throw Error('You must give index between 0-11');
+  }
+  return shortMonthLang[lang][index];
 };
 
-export const getMonthArray: TypeMakeMonth = (year, month, day, lang) => {
+export const getNameDay: TypeGetName = (index, lang = 'en') => {
+  if (index > 6 || index < 0) {
+    throw Error('You must give index between 0-6');
+  }
+  return dayLang[lang][index];
+};
+
+export const getShortNameDay: TypeGetName = (index, lang = 'en') => {
+  if (index > 6 || index < 0) {
+    throw Error('You must give index between 0-6');
+  }
+  return shortDayLang[lang][index];
+};
+
+export const getDate = (year?: number, month?: number, day?: number) => {
   let date: Date;
   if (year !== undefined && month !== undefined && day !== undefined) {
     date = new Date(year, month, day);
   } else {
     date = new Date();
   }
+  return date;
+};
+
+export const getMonthDays: TypeMakeMonth = (year, month, day, lang = 'en') => {
+  const date = getDate(year, month, day);
 
   const currentYear = date.getFullYear();
   const currentMonth = date.getMonth();
 
-  const firstDay = new Date(currentYear, currentMonth, 1);
-  const lastDay = new Date(currentYear, currentMonth + 1, 0);
-  const lastDayPerMonth = new Date(currentYear, currentMonth, 0);
+  const firstDay = getDate(currentYear, currentMonth, 1);
+  const lastDay = getDate(currentYear, currentMonth + 1, 0);
+  const lastDayPerMonth = getDate(currentYear, currentMonth, 0);
 
   const days = [];
 
@@ -118,15 +69,46 @@ export const getMonthArray: TypeMakeMonth = (year, month, day, lang) => {
   }
 
   return {
-    name: numberMonthToNameMonth(date.getMonth(), lang),
+    name: getNameMonth(date.getMonth(), lang),
     days,
   };
 };
+
 export const addLeadingZero = (number: number): string => (number < 10 ? `0${number}` : `${number}`);
 
-export const printDDMMYYYY = (date: Date) => {
-  const year = date.getFullYear();
+export const printDate = (format: string, lang: TypeLang = 'en', date: Date = new Date()) => {
+  const year = date.getFullYear().toString();
   const month = date.getMonth() + 1;
   const day = date.getDate();
-  return `${addLeadingZero(day)}.${addLeadingZero(month)}.${year}`;
+  const formatLowerCase = format.toLowerCase();
+
+  let stringDate = '';
+
+  if (formatLowerCase.includes('dddd')) {
+    stringDate += `${getNameDay(getDay(date), lang)}, ${addLeadingZero(day)} `;
+  } else if (formatLowerCase.includes('ddd')) {
+    stringDate += `${getShortNameDay(getDay(date), lang)}, ${addLeadingZero(day)} `;
+  } else if (formatLowerCase.includes('dd')) {
+    stringDate += `${addLeadingZero(day)}.`;
+  } else {
+    stringDate += `${day}.`;
+  }
+
+  if (formatLowerCase.includes('mmmm')) {
+    stringDate += `${getNameMonth(month, lang)} `;
+  } else if (formatLowerCase.includes('mmm')) {
+    stringDate += `${getNameShortMonth(month, lang)} `;
+  } else if (formatLowerCase.includes('mm')) {
+    stringDate += `${addLeadingZero(month)}.`;
+  } else {
+    stringDate += `${month}.`;
+  }
+
+  if (formatLowerCase.includes('yyyy')) {
+    stringDate += `${year}`;
+  } else {
+    stringDate += year.slice(2, 4);
+  }
+
+  return stringDate;
 };
