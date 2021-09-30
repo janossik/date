@@ -74,9 +74,9 @@ export const getMonthDays: TypeMakeMonth = (year, month, day, lang = 'en') => {
   };
 };
 
-export const addLeadingZero = (number: number): string => (number < 10 ? `0${number}` : `${number}`);
+export const addLeadingZero = (int: number): string => (int < 10 ? `0${int}` : `${int}`);
 
-export const printDate = (format: string, lang: TypeLang = 'en', date: Date = new Date()) => {
+export const printDate = (format = '', lang: TypeLang = 'en', date: Date = new Date()) => {
   const year = date.getFullYear().toString();
   const month = date.getMonth() + 1;
   const day = date.getDate();
